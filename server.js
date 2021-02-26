@@ -1,5 +1,6 @@
 // Dependencies
 
+const { table } = require('console');
 const express = require('express');
 const path = require('path');
 
@@ -14,101 +15,51 @@ app.use(express.json());
 
 // Table Data
 
-const tables = [
-  {
-    routeName: 'Table1',
-    name: '',
-    pNumber: '',
-    id: '',
-    email: ''
-  },
-  {
-    routeName: 'Table2',
-    name: '',
-    pNumber: '',
-    id: '',
-    email: ''
-  },
-  {
-    routeName: 'Table3',
-    name: '',
-    pNumber: '',
-    id: '',
-    email: ''
-  },
-  {
-    routeName: 'Table4',
-    name: '',
-    pNumber: '',
-    id: '',
-    email: ''
-  },
-  {
-    routeName: 'Table5',
-    name: '',
-    pNumber: '',
-    id: '',
-    email: ''
-  },
-  {
-    routeName: 'Table6',
-    name: '',
-    pNumber: '',
-    id: '',
-    email: ''
-  },
-  {
-    routeName: 'Table7',
-    name: '',
-    pNumber: '',
-    id: '',
-    email: ''
-  },
-];
-
+const tables = [];
+const waitlist = [];
 // Routes
 
 // Basic route that sends the user first to the AJAX Page
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'view.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-app.get('/add', (req, res) => res.sendFile(path.join(__dirname, 'add.html')));
+app.get('/reserve', (req, res) => res.sendFile(path.join(__dirname, 'reservationForm.html')));
 
-// Displays all characters
-app.get('/api/characters', (req, res) => res.json(characters));
+app.get('/tables', (req, res) => res.sendFile(path.join(__dirname, 'reservationView.html')));
 
-// Displays a single character, or returns false
-app.get('/api/characters/:character', (req, res) => {
-  const chosen = req.params.character;
+// API Dumps
+app.get('/api/waitlist', (req, res) => res.json(waitlist));
+app.get('/api/tables', (req, res) => res.json(tables));
 
-  console.log(chosen);
-
-  /* Check each character routeName and see if the same as "chosen"
-   If the statement is true, send the character back as JSON,
-   otherwise tell the user no character was found */
-
-  for (let i = 0; i < characters.length; i++) {
-    if (chosen === characters[i].routeName) {
-      return res.json(characters[i]);
-    }
-  }
-
-  return res.json(false);
-});
 
 // Create New Characters - takes in JSON input
-app.post('/api/characters', (req, res) => {
-  // req.body hosts is equal to the JSON post sent from the user
-  // This works because of our body parsing middleware
-  const newCharacter = req.body;
+app.post('/api/tables', (req, res) => {
 
-  // Using a RegEx Pattern to remove spaces from newCharacter
-  // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-  newCharacter.routeName = newCharacter.name.replace(/\s+/g, '').toLowerCase();
-  console.log(newCharacter);
+  const newTable = req.body;
 
-  characters.push(newCharacter);
-  res.json(newCharacter);
+
+  newTable.routeName = `table${(tables.length + 1).toString()}`;
+  console.log(newTable);
+
+  tables.push(newTable);
+  res.json(newTable);
 });
+
+app.post('/api/remove', (req, res) => {
+
+    
+  });
+
+app.post('/api/waitlist', (req, res) => {
+
+    const newTable = req.body;
+  
+
+    newTable.routeName = `waitlist${(tables.length + 1).toString()}`;
+    console.log(newTable);
+  
+    waitlist.push(newTable);
+    res.json(newTable);
+  });
 
 // Starts the server to begin listening
 
